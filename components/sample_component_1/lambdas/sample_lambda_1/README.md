@@ -57,8 +57,8 @@
 In CICD, we can have checksums that sees if we need to update a file or not. If yes, then proceed to next steps else not required.
 
 ### TODO:
-- Try out the lambda module from terraform-aws-modules repository.
 - Create a CICD flow to deploy to sandbox account.
+- Try out the lambda module from terraform-aws-modules repository.
 
 
 ### Important things to Note:

@@ -1,0 +1,86 @@
+name: Test and Deploy Lambda
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/**'
+      - 'components/sample_component_1/lambdas/sample_lambda_1/**'
+      - 'infrastructure/modules/lambda/**'
+
+jobs:
+  test-and-deploy:
+    name: Test and Deploy Lambda
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      # Read Terraform and Terragrunt versions
+      - name: Read Terraform and Terragrunt versions
+        id: versions
+        run: |
+          TERRAFORM_VERSION=$(cat .terraform-version)
+          TERRAGRUNT_VERSION=$(cat .terragrunt-version)
+          echo "TERRAFORM_VERSION=$TERRAFORM_VERSION" >> $GITHUB_ENV
+          echo "TERRAGRUNT_VERSION=$TERRAGRUNT_VERSION" >> $GITHUB_ENV
+
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-local.txt
+
+      # Run tests
+      - name: Run unit tests
+        run: |
+          python -m unittest discover -s components/sample_component_1/lambdas/sample_lambda_1/tests
+
+      # Check for changes in the Lambda function or infrastructure
+#      - name: Check for changes
+#        id: changes
+#        run: |
+#          if git diff --quiet HEAD^ HEAD -- components/sample_component_1/lambdas/sample_lambda_1; then
+#            echo "no_changes=true" >> $GITHUB_ENV
+#          else
+#            echo "no_changes=false" >> $GITHUB_ENV
+#        shell: bash
+
+      # Package Lambda function if changes are detected
+#      - name: Package Lambda function
+#        if: env.no_changes == 'false'
+#        run: |
+#          zip -r builds/sample_lambda_1.zip components/sample_component_1/lambdas/sample_lambda_1/src -i '*.py'
+
+      # Upload to S3
+#      - name: Upload to S3
+#        if: env.no_changes == 'false'
+#        run: |
+#          aws s3 cp builds/sample_lambda_1.zip s3://$S3_BUCKET/sample_lambda_1.zip
+
+      # Set up Terraform
+#      - name: Set up Terraform
+#        uses: hashicorp/setup-terraform@v2
+#        with:
+#          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      # Set up Terragrunt
+#      - name: Install Terragrunt
+#        run: |
+#          curl -L https://github.com/warrensbox/terragrunt/releases/download/v${{ env.TERRAGRUNT_VERSION }}/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt
+#          chmod +x /usr/local/bin/terragrunt
+
+      # Run Terraform apply
+#      - name: Deploy with Terraform
+#        if: env.no_changes == 'false'
+#        run: |
+#          cd components/sample_component_1/lambdas/sample_lambda_1/infra/sandbox
+#          terragrunt apply -auto-approve
