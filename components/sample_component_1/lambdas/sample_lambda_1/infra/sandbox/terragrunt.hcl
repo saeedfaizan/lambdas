@@ -16,7 +16,8 @@ inputs = {
   log_retention          = 14
 
   # iam role vars
-  managed_policy_arn     = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+  assume_role_identifiers = ["lambda.amazonaws.com"]
+  managed_policy_arns     = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole", "arn:aws:iam::aws:policy/SecretsManagerReadWrite", "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess", "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole", "arn:aws:iam::aws:policy/AmazonSQSFullAccess"]
 
   # lambda function vars
   lambda_name            = "sample_lambda_1"
@@ -25,10 +26,8 @@ inputs = {
   runtime                = "python3.13"
   memory_size            = 128
   timeout                = 30
-  # TODO: Need to improve this: Code changes are not properly dectected in sample_lambda_1.zip
   s3_bucket              = "my-lambda-bucket-013186329397"
   s3_key                 = "sample_lambda_1.zip"
-  s3_object_version      = "U_d7zsI67yUA8v1V8gXSxpwOD21bLmpC"
   environment_variables  = {
     ENV = "sandbox"
   }
