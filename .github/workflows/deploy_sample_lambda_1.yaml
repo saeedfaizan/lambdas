@@ -29,6 +29,7 @@ jobs:
           echo "TERRAGRUNT_VERSION=$TERRAGRUNT_VERSION" >> $GITHUB_ENV
 
       # Set up Python environment
+      # TODO: How to have a generic python version instead of hard-coded?
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -43,6 +44,14 @@ jobs:
       - name: Run unit tests
         run: |
           python -m unittest discover -s components/sample_component_1/lambdas/sample_lambda_1/tests
+
+      - name: Idealo Github App
+        uses: actions/create-github-app-token@v2.0.6
+        id: idealo-github-app
+        with:
+          app-id: ${{ secrets.IDEALO_BOT_GH_APP_ID }}
+          private-key: ${{ secrets.IDEALO_BOT_GH_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
 
       # Check for changes in the Lambda function or infrastructure
 #      - name: Check for changes
