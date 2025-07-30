@@ -1,22 +1,4 @@
-
-
-
-Important things to Note:
-
-
-Handler: components.sample_component_1.lambdas.sample_lambda_1.src.handler.lambda_handler
-
-Lambda function directory path:
-components/sample_component_1/lambdas/sample_lambda_1/src/handler.py
-
-These all folders will become the part of .zip file when the lambda function is deployed.
-
-This way we can run all tests and imports directly and indirectly without making any changes.
-
-__init__.py file was not required.
-
-
-Local Development and Testing Guide
+## Local Development and Testing Guide
 
 ### Prerequisites(first time setup)
 1. Set up python environment
@@ -46,8 +28,9 @@ Local Development and Testing Guide
    Note: Select `y` when asked to create the S3 bucket.
 6. Create S3 bucket for lambda deployment
    ```shell
-   aws s3api create-bucket --bucket my-lambda-bucket-013186329397 --region eu-central-1 --create-bucket-configuration LocationConstraint=eu-central-1
-   aws s3api put-bucket-versioning --bucket my-lambda-bucket-013186329397 --versioning-configuration Status=Enabled
+   export BUCKET_NAME="013186329397-my-lambda-bucket"
+   aws s3api create-bucket --bucket $BUCKET_NAME --region eu-central-1 --create-bucket-configuration LocationConstraint=eu-central-1
+   aws s3api put-bucket-versioning --bucket $BUCKET_NAME --versioning-configuration Status=Enabled
    ```
 
 ### Deployment Guide
@@ -63,7 +46,7 @@ Local Development and Testing Guide
     ```
 4. Upload to S3 bucket, this will create a new version in S3 and return the version id of the object
     ```shell
-   aws s3 cp builds/sample_lambda_1.zip s3://my-lambda-bucket-013186329397/sample_lambda_1.zip
+   aws s3 cp builds/sample_lambda_1.zip s3://$BUCKET_NAME/sample_lambda_1.zip
     ```
 5. Go to the required environment(e.g. sandbox) and then run terraform apply to deploy the changes
    ```shell
@@ -73,10 +56,20 @@ Local Development and Testing Guide
 
 In CICD, we can have checksums that sees if we need to update a file or not. If yes, then proceed to next steps else not required.
 
-# TODO:
+### TODO:
+- Try out the lambda module from terraform-aws-modules repository.
+- Create a CICD flow to deploy to sandbox account.
 
-Try out the lambda module from terraform-aws-modules repository.
 
-Write the commands for above process.
+### Important things to Note:
 
-Create a CICD flow to deploy to sandbox account.
+Handler: components.sample_component_1.lambdas.sample_lambda_1.src.handler.lambda_handler
+
+Lambda function directory path:
+components/sample_component_1/lambdas/sample_lambda_1/src/handler.py
+
+These all folders will become the part of .zip file when the lambda function is deployed.
+
+This way we can run all tests and imports directly and indirectly without making any changes.
+
+__init__.py file was not required.
