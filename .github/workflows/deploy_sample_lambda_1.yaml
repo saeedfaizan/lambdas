@@ -53,6 +53,11 @@ jobs:
           private-key: ${{ secrets.IDEALO_BOT_GH_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
 
+      - name: Setup credentials for terraform modules
+        uses: de-vri-es/setup-git-credentials@v2.1.2
+        with:
+          credentials: https://idealobot:${{ steps.idealo-github-app.outputs.token }}@github.com/
+
       # Check for changes in the Lambda function or infrastructure
 #      - name: Check for changes
 #        id: changes
