@@ -8,8 +8,7 @@ data "aws_iam_policy_document" "assume_lambda" {
 
     principals {
       type        = "Service"
-      # TODO: This should be passed from terragrunt
-      identifiers = ["lambda.amazonaws.com", "athena.amazonaws.com", "glue.amazonaws.com"]
+      identifiers = var.assume_role_identifiers
     }
   }
 }
@@ -23,7 +22,7 @@ resource "aws_iam_role" "lambda_exec_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "managed_policies_attachment" {
-  for_each   = toset(var.managed_policy_arn)
+  for_each   = toset(var.managed_policy_arns)
   role       = aws_iam_role.lambda_exec_role.name
   policy_arn = each.value
 }
@@ -44,6 +43,12 @@ resource "aws_cloudwatch_log_group" "this" {
 # ----------------#
 # Lambda Function #
 # ----------------#
+
+data "aws_s3_object" "lambda_s3_object" {
+  bucket = var.s3_bucket
+  key    = var.s3_key
+}
+
 resource "aws_lambda_function" "this" {
   function_name = var.lambda_name
   description   = var.description
@@ -57,7 +62,8 @@ resource "aws_lambda_function" "this" {
 
   s3_bucket        = var.s3_bucket
   s3_key           = var.s3_key
-  s3_object_version = var.s3_object_version
+  # TODO: How to ensure that we do this only when the code changes?
+  s3_object_version = data.aws_s3_object.lambda_s3_object.version_id
 
   environment {
     variables = var.environment_variables
