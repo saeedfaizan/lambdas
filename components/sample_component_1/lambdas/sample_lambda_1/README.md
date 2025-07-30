@@ -3,7 +3,7 @@
 ### Prerequisites(first time setup)
 1. Set up python environment
    1. Using `conda` (@TODO: Check best practice for python env)
-      1. Create a conda environment: `conda create -n lambdas python=3.10`
+      1. Create a conda environment: `conda create -n lambdas python=$(cat .python-version)`
       2. Activate the conda environment: `conda activate lambdas`
    2. Using `venv`(@TODO: Not tested)
        - Create a virtual environment: `python3 -m venv .venv`
